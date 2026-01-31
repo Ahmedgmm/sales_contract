@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    
+    <!-- Enhanced Sale Order Form View -->
+    <record id="view_order_form_inherit" model="ir.ui.view">
+        <field name="name">sale.order.form.inherit</field>
+        <field name="model">sale.order</field>
+        <field name="inherit_id" ref="sale.view_order_form"/>
+        <field name="arch" type="xml">
+            
+            <!-- Add contract field in header area -->
+            <xpath expr="//field[@name='partner_id']" position="after">
+                <field name="contract_id" 
+                       options="{'no_create': True, 'no_open': True}"
+                       domain="[('partner_id', '=', partner_id), ('approval_state', '=', 'approved'), ('state', '=', 'open')]"
+                       context="{'default_partner_id': partner_id}"/>
+            </xpath>
+            
+            <!-- Add contract information -->
+            <xpath expr="//field[@name='payment_term_id']" position="after">
+                <field name="require_contract" widget="boolean_toggle"/>
+                <field name="contract_approval_state" 
+                       invisible="not contract_id"
+                       decoration-success="contract_approval_state == 'approved'"
+                       decoration-warning="contract_approval_state == 'pending'"
+                       decoration-danger="contract_approval_state == 'rejected'"
+                       widget="badge"/>
+                <field name="contract_remaining_amount" 
+                       invisible="not contract_id"
+                       widget="monetary"/>
+            </xpath>
+            
+            <!-- Add alert for contract requirement -->
+            <xpath expr="//sheet" position="before">
+                <div class="alert alert-warning" 
+                     role="alert" 
+                     invisible="contract_id or not require_contract">
+                    <strong>Warning:</strong> This sale order requires an approved contract. 
+                    Please link a contract before confirming the order.
+                </div>
+                <div class="alert alert-danger" 
+                     role="alert" 
+                     invisible="not contract_id or contract_approval_state == 'approved'">
+                    <strong>Contract Not Approved:</strong> The linked contract must be approved before confirming this order.
+                </div>
+                <div class="alert alert-info" 
+                     role="alert" 
+                     invisible="not contract_id or contract_remaining_amount >= amount_total">
+                    <strong>Contract Limit:</strong> Remaining contract amount: 
+                    <field name="contract_remaining_amount" widget="monetary" readonly="1"/>
+                </div>
+            </xpath>
+            
+        </field>
+    </record>
+    
+    <!-- Enhanced Sale Order Tree View -->
+    <record id="view_order_tree_inherit" model="ir.ui.view">
+        <field name="name">sale.order.tree.inherit</field>
+        <field name="model">sale.order</field>
+        <field name="inherit_id" ref="sale.view_order_tree"/>
+        <field name="arch" type="xml">
+            <field name="partner_id" position="after">
+                <field name="contract_id" optional="show"/>
+                <field name="contract_approval_state" 
+                       optional="hide"
+                       decoration-success="contract_approval_state == 'approved'"
+                       decoration-warning="contract_approval_state == 'pending'"
+                       decoration-danger="contract_approval_state == 'rejected'"
+                       widget="badge"/>
+            </field>
+        </field>
+    </record>
+    
+    <!-- Sale Order Search View -->
+    <record id="view_sales_order_filter_inherit" model="ir.ui.view">
+        <field name="name">sale.order.search.inherit</field>
+        <field name="model">sale.order</field>
+        <field name="inherit_id" ref="sale.view_sales_order_filter"/>
+        <field name="arch" type="xml">
+            <search position="inside">
+                <field name="contract_id"/>
+                <filter name="filter_with_contract" 
+                        string="With Contract" 
+                        domain="[('contract_id', '!=', False)]"/>
+                <filter name="filter_without_contract" 
+                        string="Without Contract" 
+                        domain="[('contract_id', '=', False), ('require_contract', '=', True)]"/>
+                <group expand="0" string="Group By">
+                    <filter name="group_contract" string="Contract" context="{'group_by': 'contract_id'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+    
+    <!-- Settings for Company Configuration -->
+    <record id="view_sales_config_settings_inherit" model="ir.ui.view">
+        <field name="name">res.config.settings.form.inherit</field>
+        <field name="model">res.config.settings</field>
+        <field name="inherit_id" ref="sale.res_config_settings_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//div[@id='sale_contract']" position="after">
+                <div class="col-12 col-lg-6 o_setting_box" id="contract_sales_limit">
+                    <div class="o_setting_left_pane">
+                        <field name="sale_require_contract"/>
+                    </div>
+                    <div class="o_setting_right_pane">
+                        <label for="sale_require_contract"/>
+                        <div class="text-muted">
+                            Require approved contracts before confirming sale orders
+                        </div>
+                    </div>
+                </div>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>

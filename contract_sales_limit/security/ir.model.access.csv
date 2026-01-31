@@ -1,0 +1,5 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_contract_approval_team_user,contract.approval.team.user,model_contract_approval_team,sales_team.group_sale_salesman,1,0,0,0
+access_contract_approval_team_manager,contract.approval.team.manager,model_contract_approval_team,sales_team.group_sale_manager,1,1,1,1
+access_contract_approval_team_approver_user,contract.approval.team.approver.user,model_contract_approval_team_approver,sales_team.group_sale_salesman,1,0,0,0
+access_contract_approval_team_approver_manager,contract.approval.team.approver.manager,model_contract_approval_team_approver,sales_team.group_sale_manager,1,1,1,1
