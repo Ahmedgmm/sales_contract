@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
-from . import contract_approval_team
-from . import contract
+from . import sale_contract
+from . import approval_team
 from . import sale_order
+from . import res_config_settings

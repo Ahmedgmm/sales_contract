@@ -1,28 +1,17 @@
-# -*- coding: utf-8 -*-
 {
-    'name': 'Contract-Based Sales Limitation',
+    'name': 'Sales Contract Approval & Limits',
     'version': '19.0.1.0.0',
     'category': 'Sales',
-    'summary': 'Restrict sales based on approved contracts with approval team limits',
-    'description': """
-        This module allows you to:
-        - Link sales orders to contracts
-        - Require approved contracts before confirming sales
-        - Set contract approval teams with amount limits
-        - Track contract usage and remaining amounts
-        - Prevent sales without valid approved contracts
-    """,
+    'summary': 'Manage contracts with approval teams and limit sales orders based on contract balance.',
     'author': 'Your Company',
-    'depends': ['sale_management', 'contract'],
+    'depends': ['sale', 'mail', 'base'],
     'data': [
         'security/ir.model.access.csv',
-        'views/contract_views.xml',
-        'views/contract_approval_team_views.xml',
+        'views/approval_team_views.xml',
+        'views/sale_contract_views.xml',
         'views/sale_order_views.xml',
-        'views/menu_views.xml',
+        'views/res_config_settings_views.xml',
     ],
     'installable': True,
-    'application': False,
-    'auto_install': False,
-    'license': 'LGPL-3',
+    'application': True,
 }
